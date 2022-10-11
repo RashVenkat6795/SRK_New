@@ -10,7 +10,7 @@ import RNPickerSelect from 'react-native-picker-select'
 import { TextInput, Button } from 'react-native-paper'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
-import { getStores } from '@/Store/User'
+import { getStores, getStoreProjects } from '@/Store/User'
 import { Config } from '@/Config'
 import Request from '@/Requests/Core'
 
@@ -20,14 +20,16 @@ const StockList = () => {
   const dispatch = useDispatch()
 
   const Stores = useSelector(state => state.user.stores)
+  const StoreProjects = useSelector(state => state.user.storeProjects)
   const UserProject = useSelector(state => state.user.selectedProject)
 
-  const [selectedStore, setSelectedStore] = useState(Stores[0]?.id)
+  const [selectedStore, setSelectedStore] = useState(StoreProjects[0]?.id)
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
 
   useEffect(() => {
     dispatch(getStores({ }))
+    dispatch(getStoreProjects({ project_structure_id: UserProject }))
     getData()
   },[])
 
@@ -58,7 +60,7 @@ const StockList = () => {
     <View style={[Layout.fill]}>
       {loading && <Loader/>}
       <View style={[Layout.row, Layout.justifyContentBetween, Gutters.smallHPadding, Gutters.regularTMargin]}>
-        <View style={{ flex: 0.5 }}>
+        <View style={[Gutters.smallRMargin]}>
           <Text style={[Fonts.titleTiny,{ color: Colors.primary }]}>Date</Text>
           <Text style={[Fonts.textSmall, Gutters.smallTMargin, { color: Colors.primary }]}>{moment(new Date()).format('DD/MM/YYYY')}</Text>
         </View>
@@ -67,9 +69,10 @@ const StockList = () => {
           <Text style={[Fonts.titleTiny, Gutters.tinyBMargin, { color: Colors.primary }]}>Store</Text>
           <RNPickerSelect
             placeholder={{}}
-            items={Stores}
+            items={StoreProjects}
             value={selectedStore}
             onValueChange={value => {
+              setData([])
               setSelectedStore(value)
               getData()
             }}
@@ -80,25 +83,34 @@ const StockList = () => {
         </View>
       </View>
 
-      <View style={[Gutters.largeTMargin, Gutters.smallHPadding]}>
-        <View style={[Layout.row, Gutters.smallVPadding, { borderWidth: 1, borderColor: Colors.grey }]}>
-          <Text style={[Fonts.titleTiny, { flex: 1.8, color: Colors.primary, paddingLeft: 14 }]}>Material Name</Text>
-          <Text style={[Fonts.titleTiny, Fonts.textCenter, { flex: 1, color: Colors.primary }]}>Stock In Hand</Text>
-          <Text style={[Fonts.titleTiny, Fonts.textCenter, { flex: 0.6, color: Colors.primary }]}>Unit</Text>
-        </View>
-        <FlatList
-          data={data}
-          keyExtractor={(item, index) => item + index}
-          renderItem={({item,index}) => {
-            return(
-              <View style={[Layout.row, Gutters.smallTMargin]}>
-                <Text style={[Fonts.textSmall, { flex: 2 }]}>{item.material_name}</Text>
-                <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 0.6 }]}>{item?.stock}</Text>
-                <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 0.6 }]}>{item?.unit}</Text>
-              </View>
-            )
-          }}
-        />
+      <View style={[Layout.fill, Gutters.largeTMargin, Gutters.smallHPadding]}>
+        {data?.length > 0 ? 
+          <View>
+            <View style={[Layout.row, Gutters.smallVPadding, { borderWidth: 1, borderColor: Colors.grey }]}>
+              <Text style={[Fonts.titleTiny, { flex: 1.8, color: Colors.primary, paddingLeft: 14 }]}>Material Name</Text>
+              <Text style={[Fonts.titleTiny, Fonts.textCenter, { flex: 1, color: Colors.primary }]}>Stock In Hand</Text>
+              <Text style={[Fonts.titleTiny, Fonts.textCenter, { flex: 0.6, color: Colors.primary }]}>Unit</Text>
+            </View>
+
+            <FlatList
+              data={data}
+              keyExtractor={(item, index) => item + index}
+              renderItem={({item,index}) => {
+                return(
+                  <View style={[Layout.row, Gutters.smallTMargin]}>
+                    <Text style={[Fonts.textSmall, { flex: 2 }]}>{item.material_name}</Text>
+                    <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 0.6 }]}>{item?.stock}</Text>
+                    <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 0.6 }]}>{item?.unit}</Text>
+                  </View>
+                )
+              }}
+            />
+          </View>
+        :
+          <View style={[Layout.fill, Layout.center]}>
+            <Text style={Fonts.textSmall}>No Items found</Text>
+          </View>
+        }
       </View>
     </View>
   )

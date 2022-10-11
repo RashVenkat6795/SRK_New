@@ -8,6 +8,7 @@ import { navigateAndSimpleReset } from '@/Navigators/utils'
 import { TextInput } from 'react-native-paper'
 import { getAuth, setAuth } from '@/Store/User'
 import { useDispatch, useSelector } from 'react-redux'
+import { ScrollView } from 'react-native-gesture-handler'
 
 const Login = () => {
   const { Layout, Gutters, Fonts, Colors, Common, Images } = useTheme()
@@ -15,11 +16,11 @@ const Login = () => {
   const { width } = Dimensions.get('window')
   const dispatch = useDispatch()
 
-  const [username, setUsername] = useState('kumar')
-  const [password, setPassword] = useState('kumar@123')
+  // const [username, setUsername] = useState('kumar')
+  // const [password, setPassword] = useState('kumar123')
 
-  // const [username, setUsername] = useState('')
-  // const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [visible, setVisible] = useState(false)
 
   const access_token = useSelector(state => state.user.accessToken)
@@ -28,6 +29,7 @@ const Login = () => {
   },[])
 
   const loginAction = () => {
+    // console.log("username, password, access_token", username, password, access_token)
     dispatch(getAuth({ username, password, access_token }))
     // dispatch(setAuth({ login: true }))
   }
@@ -37,41 +39,56 @@ const Login = () => {
       <View style={{ height: '30%', width:'100%', backgroundColor: Colors.primary, borderBottomLeftRadius: width/5, borderBottomRightRadius: width/5 }}/>
 
       <View style={[Gutters.regularHMargin, Gutters.regularVMargin, Gutters.largeVPadding, Gutters.regularHPadding, Layout.fill, { backgroundColor: Colors.white, borderRadius: 10, position:'absolute', top: 0, bottom: 0, right: 0, left: 0 }]}>
-        <Image source={Images.login} style={[Layout.selfCenter, { width: 250, height: 250 }]} resizeMode={'contain'}/>
+        <ScrollView style={Layout.fill}>
+          <Image source={Images.login} style={[Layout.selfCenter, { width: 250, height: 250 }]} resizeMode={'contain'}/>
 
-        <Text style={[Fonts.textSmall, Fonts.textCenter, Gutters.smallBMargin]}>Enter your username and password </Text>
-        <TextInput
-          label={'Username'}
-          value={username}
-          onChangeText={text => setUsername(text)}
-          mode={'outlined'}
-          theme={Common.paperTheme}
-          style={Gutters.regularTMargin}
-        />
+          <Text style={[Fonts.textSmall, Fonts.textCenter, Gutters.smallBMargin]}>Enter your username and password </Text>
+          <TextInput
+            label={'Username'}
+            value={username}
+            onChangeText={text => setUsername(text)}
+            mode={'outlined'}
+            theme={Common.paperTheme}
+            style={Gutters.regularTMargin}
+            autoCapitalize={'none'}
+          />
+          <TextInput
+            label={'Password'}
+            value={password}
+            onChangeText={text => setPassword(text)}
+            mode={'outlined'}
+            theme={Common.paperTheme}
+            style={Gutters.regularTMargin}
+            autoCapitalize={'none'}
+            secureTextEntry={visible ? false : true}
+            right={<TextInput.Icon icon={visible ? 'eye-off' : "eye"} onPress={() => setVisible(!visible)} color={Colors.primary}/>}
+            style={Gutters.regularTMargin}
+          />
 
-        <TextInput
-          label={'Password'}
-          value={password}
-          onChange={text => setPassword(text)}
-          mode={'outlined'}
-          theme={Common.paperTheme}
-          secureTextEntry={visible ? false : true}
-          right={<TextInput.Icon icon={visible ? 'eye-off' : "eye"} onPress={() => setVisible(!visible)} color={Colors.primary}/>}
-          style={Gutters.regularTMargin}
-        />
+          {/* <TextInput
+            label={'Password'}
+            value={password}
+            onChange={text => setPassword(text)}
+            mode={'outlined'}
+            theme={Common.paperTheme}
+            // secureTextEntry={true}
+            // secureTextEntry={visible ? false : true}
+            // right={<TextInput.Icon icon={visible ? 'eye-off' : "eye"} onPress={() => setVisible(!visible)} color={Colors.primary}/>}
+            style={Gutters.regularTMargin}
+            autoCapitalize={'none'}
+          /> */}
 
-        <TouchableOpacity style={[Layout.selfCenter,Gutters.regularTMargin]}>
-          <Text style={[Fonts.textSmall]}>Forgot Your Password? <Text style={{color: Colors.error }}>Ask Admin</Text></Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={[Layout.selfCenter,Gutters.regularTMargin]}>
+            <Text style={[Fonts.textSmall]}>Forgot Your Password? <Text style={{color: Colors.error }}>Ask Admin</Text></Text>
+          </TouchableOpacity>
 
-        <MyButton
-          label={'SIGN IN'}
-          onBtnPress={loginAction}
-          btnstyle={Gutters.largeTMargin}
-        />
+          <MyButton
+            label={'SIGN IN'}
+            onBtnPress={loginAction}
+            btnstyle={Gutters.largeTMargin}
+          />
+        </ScrollView>
       </View>
-
-      
 
       {/* <Text style={[Fonts.titleTiny, Gutters.regularTMargin, { color: Colors.light_grey }]}>Select Logo to login</Text>
 

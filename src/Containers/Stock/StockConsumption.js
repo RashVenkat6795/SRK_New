@@ -9,7 +9,7 @@ import { navigateAndSimpleReset } from '@/Navigators/utils'
 import { Overlay } from 'react-native-elements'
 import RNPickerSelect from 'react-native-picker-select'
 import { useDispatch, useSelector } from 'react-redux'
-import { getStores, getMaterials } from '@/Store/User'
+import { getStores, getMaterials, getStoreProjects } from '@/Store/User'
 import { FAB, TextInput, Button } from 'react-native-paper'
 import Request from '@/Requests/Core'
 import { Config } from '@/Config'
@@ -24,11 +24,12 @@ const StockConsumption = (props) => {
   const dispatch = useDispatch()
 
   const Stores = useSelector(state => state.user.stores)
+  const StoreProjects = useSelector(state => state.user.storeProjects)
   const Materials = useSelector(state => state.user.materials)
   const UserProject = useSelector(state => state.user.selectedProject)
   const LoginInfo = useSelector(state => state.user.loginInfo)
 
-  const [selectedStore, setSelectedStore] = useState(Stores[0]?.id)
+  const [selectedStore, setSelectedStore] = useState(StoreProjects[0]?.id)
   const [showModal, setShowModal] = useState(false)
   const [list, setList] = useState([])
   const [loading, setLoading] = useState(false)
@@ -42,6 +43,7 @@ const StockConsumption = (props) => {
   useEffect(() => {
     dispatch(getStores({ }))
     dispatch(getMaterials({}))
+    dispatch(getStoreProjects({ project_structure_id: UserProject }))
   },[])
 
   const updateMaterial = (value) => {
@@ -124,7 +126,7 @@ const StockConsumption = (props) => {
         <Text style={[Fonts.titleTiny, Gutters.tinyBMargin, { color: Colors.primary }]}>Store</Text>
         <RNPickerSelect
           placeholder={{}}
-          items={Stores}
+          items={StoreProjects}
           value={selectedStore}
           onValueChange={value => {
             setSelectedStore(value)

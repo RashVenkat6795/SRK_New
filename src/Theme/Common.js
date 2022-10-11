@@ -77,6 +77,7 @@ export default function ({ Colors, Fonts, Layout, Gutters, ...args }) {
           borderRadius: 8,
           color: 'black',
           paddingRight: 30, // to ensure the text is never behind the icon
+          backgroundColor: Colors.white
         },
         iconContainer: { 
           top: 10, right: 12 

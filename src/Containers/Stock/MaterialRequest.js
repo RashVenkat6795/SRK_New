@@ -41,6 +41,7 @@ const MaterialRequest = (props) => {
   const [qty, setQty] = useState()
 
   useEffect(() => {
+    dispatch(getContractors({ "employee_id": LoginInfo?.employee_id, "project_structure_id": UserProject }))
     dispatch(getMaterials({}))
   },[])
 
@@ -179,7 +180,7 @@ const MaterialRequest = (props) => {
 
           <RNPickerSelect
             // placeholder={{}}
-            placeholder={{ inputLabel: 'Select a Material'}}
+            placeholder={{ label: 'Select a Material'}}
             items={Materials}
             value={selectedMaterial}
             onValueChange={value => {
@@ -216,10 +217,19 @@ const MaterialRequest = (props) => {
             
             {qty > Number(stock) && <Text style={[Gutters.smallTMargin, Fonts.textTiny, Fonts.textCenter, { color: Colors.error }]}>* Entered quantity is greater than in-hand stock quantity</Text>}
 
-            <Button mode='contained' color={Colors.primary} style={[Gutters.largeTMargin, Layout.selfCenter, { width: '80%' }]} onPress={() => addMaterial()}
-            >
-              Add Material
-            </Button>
+            <View style={[Layout.rowHSpaced]}>
+              <Button mode='contained' color={Colors.error} style={[Gutters.largeTMargin, Layout.selfCenter, { width: '40%' }]} onPress={() => setShowModal(false)}
+              >
+                Cancel
+              </Button>
+
+              <Button mode='contained' color={Colors.primary} style={[Gutters.largeTMargin, Layout.selfCenter, { width: '55%' }]} onPress={() => addMaterial()}
+              >
+                Add Material
+              </Button>
+
+              
+            </View>
           </>}
 
         </View>

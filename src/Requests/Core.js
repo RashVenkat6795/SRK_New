@@ -15,6 +15,12 @@ const Request = async function (options, isHeader = true) {
 	const onSuccess = function (response) {
 		console.debug('Request Successful!', response);
 		return response.data;
+
+		// const jsonText = JSON.stringify(response.data);
+		// const objResponse = JSON.parse(jsonText);
+		// console.log(objResponse);
+		// return objResponse;
+
 	};
 
 	const onError = function (error) {

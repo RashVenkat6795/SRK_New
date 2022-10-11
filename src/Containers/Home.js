@@ -22,7 +22,7 @@ const Home = () => {
   const HomeStat = useSelector(state => state.user.homeStats)
   const UserProject = useSelector(state => state.user.selectedProject) || '1'
   const Projects = useSelector(state => state.user.projects)
-console.log("HomeStat.....", HomeStat);
+
   useEffect(() => {
     getStats()
     dispatch(getProjects({ employee_id: LoginInfo?.employee_id }))
@@ -63,7 +63,7 @@ console.log("HomeStat.....", HomeStat);
           getStats()
         }}
         // useNativeAndroidPickerStyle={false}
-        style={[Common.pickerSelectStyles,{ borderWidth: 1 }]}
+        style={{ ...Common.pickerSelectStyles, borderWidth: 1 }}
         Icon={() => Platform.OS == 'ios' ? (<FontAwesome name={'chevron-down'} size={20} color="gray" style={{ marginTop: 4 }}/>) : null}
       />
 
