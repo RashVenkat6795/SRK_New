@@ -56,7 +56,7 @@ export const AppNavigation = (props) => {
               return <SvgIcons name={'dashboard'} color={color}/>
             } else if(route.name == 'Stocks'){
               return <SvgIcons name={'stock'} color={color}/>
-            } else if(route.name == 'AttendanceMain'){
+            } else if(route.name == 'Attendance'){
               return <SvgIcons name={'attendance'} color={color}/>
             } else if(route.name == 'Work Report'){
               return <SvgIcons name={'report'} color={color}/>
@@ -72,7 +72,7 @@ export const AppNavigation = (props) => {
       >
         <Tab.Screen name={'Dashboard'} component={Home} options={{ headerRight: () => <HeaderRightBtn/>, headerTintColor: Colors.primary }}/>
         <Tab.Screen name={'Stocks'} component={Stock} options={{ headerRight: () => <HeaderRightBtn/>, headerTintColor: Colors.primary }}/>
-        <Tab.Screen name={'AttendanceMain'} component={AttendanceMain} options={{ headerRight: () => <HeaderRightBtn/>, headerTintColor: Colors.primary }}/>
+        <Tab.Screen name={'Attendance'} component={AttendanceMain} options={{ headerRight: () => <HeaderRightBtn/>, headerTintColor: Colors.primary }}/>
         <Tab.Screen name={'Work Report'} component={WorkReport} options={{ headerRight: () => <HeaderRightBtn/>, headerTintColor: Colors.primary }}/>
         <Tab.Screen name={'Profile'} component={Profile} options={{ headerRight: () => <HeaderRightBtn/>, headerTintColor: Colors.primary }}/>
       </Tab.Navigator>

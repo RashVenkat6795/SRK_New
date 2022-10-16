@@ -97,7 +97,7 @@ const SendMaterial = (props) => {
   }
 
   const addMaterial = () => {
-    if(qty > Number(stock)){
+    if(qty > Number(stock) || qty < 1){
       setStock(0); setQty(0)
       setSelectedMaterial(null)
       setSelectedMaterialObj(null)

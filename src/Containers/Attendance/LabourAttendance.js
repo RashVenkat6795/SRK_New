@@ -234,7 +234,7 @@ const LabourAttendance = () => {
 
         <View style={[Layout.rowHCenter, Gutters.regularTMargin]}>
           <Text style={[Layout.fill, Fonts.textSmall]}>Total</Text>
-          <Text style={[Layout.fill, Fonts.titleSmall, Fonts.textCenter]}>{(idleLabour + nonskilledLabour + semiskilledLabour + skilledLabour) || 0}</Text>
+          <Text style={[Layout.fill, Fonts.titleSmall, Fonts.textCenter]}>{(Number(idleLabour) + Number(nonskilledLabour) + Number(semiskilledLabour) + Number(skilledLabour)) || 0}</Text>
         </View>
 
         <TextInput
