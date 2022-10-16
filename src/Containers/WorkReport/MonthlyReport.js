@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { ActivityIndicator, View, Text, ScrollView, TouchableOpacity, Touchable, FlatList } from 'react-native'
+import { ActivityIndicator, View, Text, ScrollView, TouchableOpacity, Touchable, FlatList, Platform } from 'react-native'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@/Hooks'
 import { Button, TextInput } from 'react-native-paper'
 import { Brand, Loader } from '@/Components'
 import { setDefaultTheme } from '@/Store/Theme'
 import { navigateAndSimpleReset } from '@/Navigators/utils'
-// import MonthPicker from 'react-native-month-year-picker'
+import MonthPicker from 'react-native-month-year-picker'
 import FontAwesome from 'react-native-vector-icons/FontAwesome5'
+import RNPickerSelect from 'react-native-picker-select'
 import moment from 'moment'
 import Request from '@/Requests/Core'
 import { Config } from '@/Config'
@@ -15,17 +16,19 @@ import { useSelector, useDispatch } from 'react-redux'
 import { isObject } from 'lodash'
 
 const MonthlyReport = () => {
-  const { Layout, Gutters, Fonts, Colors } = useTheme()
+  const { Layout, Gutters, Fonts, Colors, Common } = useTheme()
   const { t } = useTranslation()
   const dispatch = useDispatch()
 
-  const Months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const MonthsArr = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  const Months = [{ label: "Jan", value: "Jan"}, { label: "Feb", value: "Feb" }, { label: "Mar", value: "Mar" }, { label: "Apr", value: "Apr"}, { label: "May", value: "May" }, { label: "Jun", value: "Jun" }, { label: "Jul", value: "Jul" }, { label: "Aug", value: "Aug" }, { label: "Sep", value: "Sep" }, { label: "Oct", value: "Oct" }, { label: "Nov", value: "Nov" }, { label: "Dec", value: "Dec" }];
 
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [month, setMonth] = useState(Months[new Date().getMonth()])
+  const [month, setMonth] = useState(MonthsArr[new Date().getMonth()])
   const [year, setYear] = useState(new Date().getFullYear())
   const [message, setMessage] = useState('')
   const [list_data, setListData] = useState([])
@@ -34,23 +37,30 @@ const MonthlyReport = () => {
 
   const showPicker = useCallback((value) => setShow(value), []);
 
-  const onValueChange = useCallback((event, newDate) => {
-    const selectedDate = newDate || date;
-    setDate(selectedDate);
-    setMonth(Months[new Date(date).getMonth()])
-    setYear(new Date(date).getFullYear())
-    showPicker(false);
-    console.log("selectedDate", selectedDate, "month", Months[new Date(date).getMonth()], "year", year);
-  },[date, showPicker])
+  let onValueChange = (event, newDate) => {
+    //NOTE (IMPORTANT!!!): do not move this setShow state call. This MUST be at the top of the method otherwise the MonthPicker will break when used on Android
+    setShow(false);
+    if (newDate != null && newDate != undefined)
+    {
+      //do something here and set monthPickerSelectedDate to the date value
+      const selectedDate = newDate || date;
+      console.log("selected date", MonthsArr[new Date(newDate).getMonth()], new Date(newDate).getFullYear())
+      setDate(selectedDate);
+      setMonth(MonthsArr[new Date(newDate).getMonth()])
+      setYear(new Date(newDate).getFullYear())
+      getData(MonthsArr[new Date(newDate).getMonth()], new Date(newDate).getFullYear())
+    }
+    // if we use setShow(false); here after we set the "monthPickerSelectedDate", the MonthPicker will end up in a loop on Android when using "okButton" and it will never "hide".
+  }
 
   useEffect(() => {
-    getData()
+    getData(year, month)
   },[])
 
-  const getData = () => {
+  const getData = (yearRxd, monthRxd) => {
     let paramObj = {
       "project_structure_id": UserProject, //"2",
-      "program_month": `${year}-${month}` // "2022-Sep"
+      "program_month": `${yearRxd}-${monthRxd}` // "2022-Sep"
     }
     console.log("paramObj....", paramObj)
     setLoading(true)
@@ -103,6 +113,20 @@ const MonthlyReport = () => {
           </TouchableOpacity>
         {/* </View> */}
 
+        {/* <RNPickerSelect
+          placeholder={{}}
+          items={Months}
+          value={month}
+          onValueChange={value => {
+            // dispatch(setUserProject({ id: value }));
+            // getStats()
+            setMonth
+          }}
+          // useNativeAndroidPickerStyle={false}
+          style={{ ...Common.pickerSelectStyles, borderWidth: 1 }}
+          Icon={() => Platform.OS == 'ios' ? (<FontAwesome name={'chevron-down'} size={20} color="gray" style={{ marginTop: 4 }}/>) : null}
+        /> */}
+
         <TouchableOpacity 
           style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.primary, alignItems:'center', justifyContent:'center' }}
           onPress={getData}
@@ -110,7 +134,9 @@ const MonthlyReport = () => {
           <FontAwesome name={'arrow-right'} color={Colors.white} size={22}/>
         </TouchableOpacity>
       </View>
-      {/* {show && (
+
+      
+      {show && (
         <MonthPicker
           onChange={onValueChange}
           value={date}
@@ -118,7 +144,7 @@ const MonthlyReport = () => {
           // maximumDate={new Date(2025, 5)}
           locale={'en'}
         />
-      )} */}
+      )}
 
       {list_data?.length > 0 ? 
         <FlatList

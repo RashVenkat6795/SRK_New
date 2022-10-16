@@ -66,7 +66,8 @@ export const AppNavigation = (props) => {
           },
           tabBarActiveTintColor: Colors.primary,
           tabBarInactiveTintColor: Colors.grey,
-          headerShown: true
+          headerShown: true,
+          tabBarHideOnKeyboard: true
         })}
         initialRouteName={'Dashboard'}
       >
