@@ -65,12 +65,8 @@ const MaterialRequest = (props) => {
   }
 
   const addMaterial = () => {
-    if(qty > Number(stock) || qty < 1){
-      setStock(0); setQty(0)
-      setSelectedMaterial(null)
-      setSelectedMaterialObj(null)
-      setShowModal(false)
-    } else {
+    // if(qty > Number(stock) || qty < 1){
+    if(qty > 1){
       let dt = [...list]
       dt.push({
         material: selectMaterialObj, 
@@ -80,6 +76,11 @@ const MaterialRequest = (props) => {
       setList(dt)
       setShowModal(false)
       console.log("list.....", list)
+    } else {
+      setStock(0); setQty(0)
+      setSelectedMaterial(null)
+      setSelectedMaterialObj(null)
+      setShowModal(false)
     }
   }
 
@@ -215,7 +216,7 @@ const MaterialRequest = (props) => {
               </View>
             </View>
             
-            {qty > Number(stock) && <Text style={[Gutters.smallTMargin, Fonts.textTiny, Fonts.textCenter, { color: Colors.error }]}>* Entered quantity is greater than in-hand stock quantity</Text>}
+            {/* {qty > Number(stock) && <Text style={[Gutters.smallTMargin, Fonts.textTiny, Fonts.textCenter, { color: Colors.error }]}>* Entered quantity is greater than in-hand stock quantity</Text>} */}
 
             <View style={[Layout.rowHSpaced]}>
               <Button mode='contained' color={Colors.error} style={[Gutters.largeTMargin, Layout.selfCenter, { width: '40%' }]} onPress={() => setShowModal(false)}

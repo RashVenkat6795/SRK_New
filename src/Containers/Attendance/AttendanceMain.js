@@ -20,7 +20,7 @@ const AttendanceMain = () => {
 
         <TouchableOpacity 
           style={[Layout.fill, Gutters.regularHPadding, Gutters.regularVPadding, Gutters.regularTMargin, Styles.boxShadow, { backgroundColor: Colors.white }]}
-          onPress={() => navigate('Attendance')}
+          onPress={() => navigate('SelfAttendance')}
         >
           <Text style={Fonts.textSmall}>Self/Visitor Attendance</Text>
         </TouchableOpacity>

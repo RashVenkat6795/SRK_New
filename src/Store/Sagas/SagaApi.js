@@ -150,7 +150,7 @@ export function* handleGetNotifications(action){
 export function* handleGetProfileDetails(action){
   try {
     const response = yield call(getProfDet, action?.payload)
-    // console.log("getprofiledetails resp", response)
+    console.log("getprofiledetails resp", response)
     if(response?.employee){
       yield put(setProfileDetails({ data: response?.employee }))
     }

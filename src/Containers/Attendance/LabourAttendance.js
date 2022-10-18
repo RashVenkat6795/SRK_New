@@ -44,126 +44,60 @@ const LabourAttendance = () => {
   const [nonskilledLabour, setNonSkilledLabour] = useState()
   const [idleLabour, setIdleLabour] = useState()
   const [remarks, setRemarks] = useState('')
+  const [showMsg, setShowMsg] = useState(false)
 
   useEffect(() => {
     dispatch(getEmployees({ company_id: LoginInfo?.company_id }))
     dispatch(getContractors({ "employee_id": LoginInfo?.employee_id, "project_structure_id": UserProject }))
   },[])
 
-  const onSegmentButtonSelected = (index) => {
-    if (activeIndex != index) {
-      setActiveIndex(index)
-      ViewPager?.current?.setPage(index)
-    }
-  }
-
-  const loginAction = () => {
-    console.log("login Action")
-  }
-
-  const logoutAction = () => {
-    console.log("logout Action")
-  }
-
-  const selfAttendance = () => {
-    setLoading(true)
-    Request({
-      method: 'POST',
-      url: Config.SELF_ATTENDANCE,
-      data: {
-        employee_id: LoginInfo?.employee_id
-      }
-    }).then(response => {
-      console.log("self attendance", response)
-      if(response?.self_attendance?.status == 1){
-        setLoading(false)
-        ToastMessage(response?.self_attendance?.message, MessageTypes.success)
-      } else {
-        setLoading(false)
-        ToastMessage(response?.self_attendance?.message, MessageTypes.data)
-      }
-    }).catch(error => {
-      setLoading(false)
-      console.log("attendance error", error)
-    })
-  }
-
-  function onMultiChange() {
-    return (item) => setSelectedTeams(xorBy(selectedTeams, [item], 'id'))
-  }
-
-  const visitorAttendance = () => {
-    setLoading(true)
-    let dataObj = []
-    selectedTeams?.map((item,index) => {
-      dataObj.push({ visit_employee_id: item?.employee_id })
-    })
-    let param_obj = {
-      "project_structure_id": UserProject, //"3", 
-      "employee_id": LoginInfo?.employee_id, //"2", 
-      "visit_date": moment(new Date()).format('YYYY-MM-DD'), //"2022-09-26", 
-      "employee_visit": dataObj
-    }
-    console.log("visitor attendance param", param_obj)
-    Request({
-      method: 'POST',
-      url: Config.VISITOR_ATTENDANCE,
-      data: param_obj
-    }).then(response => {
-      console.log("visitor attendance resp", response)
-      setLoading(false)
-      if(response?.employee_visit?.status == '1'){
-        ToastMessage(response?.employee_visit?.message, MessageTypes.success)
-      }
-    }).catch(error => {
-      console.log("visitor attendance error", error)
-      setLoading(false)
-    })
-  }
-
   const contractorAttendance = () => {
-    setLoading(true)
-    let paramObj = { 
-      "employee_id": LoginInfo?.employee_id, //'2
-      "project_structure_id": UserProject, // "3",
-      "contractor_id": selectedContractor, //"3",
-      "attendance_date": moment(new Date()).format('YYYY-MM-DD') ,//"2022-09-26",
-      "total_labour": `${(idleLabour + nonskilledLabour + semiskilledLabour + skilledLabour) || 0}`,//"10",
-      "skilled_labour": skilledLabour, //"3",
-      "semi_skilled_labour": semiskilledLabour, //"1",
-      "un_skilled_labour": nonskilledLabour, //"1",
-      "idle_labour": idleLabour,//"2",
-      "remarks": remarks // "Contractor Labour Attendance 2022-09-26"
-    }
-    // let paramObj = {
-    //   "employee_id":"2",
-    //   "project_structure_id":"3",
-    //   "contractor_id":"3",
-    //   "attendance_date":"2022-10-06",
-    //   "total_labour":"10",
-    //   "skilled_labour":"3",
-    //   "semi_skilled_labour":"1",
-    //   "un_skilled_labour":"1",
-    //   "idle_labour":"2",
-    //   "remarks":"Contractor Labour Attendance 2022-10-06"
-    // }
-    console.log("labour attendance contract wise", paramObj)
-    Request({
-      method: 'POST',
-      url: Config.LABOURATTENDANCE_STOREWISE,
-      data: paramObj
-    }).then(response => {
-      console.log("contractor attendance resp", response)
-      setLoading(false)
-      if(response?.labour_attendance?.status == '1'){
-        ToastMessage(response?.labour_attendance?.message, MessageTypes.success)
-      } else {
-        ToastMessage(response?.labour_attendance?.message, MessageTypes.danger)
+    if((Number(idleLabour) + Number(nonskilledLabour) + Number(semiskilledLabour) + Number(skilledLabour)) <= reqCount) {
+      setLoading(true)
+      let paramObj = { 
+        "employee_id": LoginInfo?.employee_id, //'2
+        "project_structure_id": UserProject, // "3",
+        "contractor_id": selectedContractor, //"3",
+        "attendance_date": moment(new Date()).format('YYYY-MM-DD') ,//"2022-09-26",
+        "total_labour": `${(idleLabour + nonskilledLabour + semiskilledLabour + skilledLabour) || 0}`,//"10",
+        "skilled_labour": skilledLabour, //"3",
+        "semi_skilled_labour": semiskilledLabour, //"1",
+        "un_skilled_labour": nonskilledLabour, //"1",
+        "idle_labour": idleLabour,//"2",
+        "remarks": remarks // "Contractor Labour Attendance 2022-09-26"
       }
-    }).catch(error => {
-      console.log("contractor attendance error", error)
-      setLoading(false)
-    })
+      // let paramObj = {
+      //   "employee_id":"2",
+      //   "project_structure_id":"3",
+      //   "contractor_id":"3",
+      //   "attendance_date":"2022-10-06",
+      //   "total_labour":"10",
+      //   "skilled_labour":"3",
+      //   "semi_skilled_labour":"1",
+      //   "un_skilled_labour":"1",
+      //   "idle_labour":"2",
+      //   "remarks":"Contractor Labour Attendance 2022-10-06"
+      // }
+      console.log("labour attendance contract wise", paramObj)
+      Request({
+        method: 'POST',
+        url: Config.LABOURATTENDANCE_STOREWISE,
+        data: paramObj
+      }).then(response => {
+        console.log("contractor attendance resp", response)
+        setLoading(false)
+        if(response?.labour_attendance?.status == '1'){
+          ToastMessage(response?.labour_attendance?.message, MessageTypes.success)
+        } else {
+          ToastMessage(response?.labour_attendance?.message, MessageTypes.danger)
+        }
+      }).catch(error => {
+        console.log("contractor attendance error", error)
+        setLoading(false)
+      })
+    } else {
+      setShowMsg(true)
+    }
   }
 
   const renderAttendanceFields = () => {
@@ -188,7 +122,10 @@ const LabourAttendance = () => {
           <Text style={[Layout.fill, Fonts.textSmall]}>Skilled Labour</Text>
           <TextInput
             value={skilledLabour}
-            onChangeText={text => setSkilledLabour(text)}
+            onChangeText={text => {
+              setShowMsg(false)
+              setSkilledLabour(text)
+            }}
             mode={'outlined'}
             theme={Common.paperTheme}
             style={Layout.fill}
@@ -200,7 +137,10 @@ const LabourAttendance = () => {
           <Text style={[Layout.fill, Fonts.textSmall]}>Semi-Skilled Labour</Text>
           <TextInput
             value={semiskilledLabour}
-            onChangeText={text => setSemiSkilledLabour(text)}
+            onChangeText={text => {
+              setShowMsg(false)
+              setSemiSkilledLabour(text)
+            }}
             mode={'outlined'}
             theme={Common.paperTheme}
             style={Layout.fill}
@@ -212,7 +152,10 @@ const LabourAttendance = () => {
           <Text style={[Layout.fill, Fonts.textSmall]}>Non-Skilled Labour</Text>
           <TextInput
             value={nonskilledLabour}
-            onChangeText={text => setNonSkilledLabour(text)}
+            onChangeText={text => {
+              setShowMsg(false)
+              setNonSkilledLabour(text)
+            }}
             mode={'outlined'}
             theme={Common.paperTheme}
             style={Layout.fill}
@@ -224,7 +167,10 @@ const LabourAttendance = () => {
           <Text style={[Layout.fill, Fonts.textSmall]}>Idle Labour</Text>
           <TextInput
             value={idleLabour}
-            onChangeText={text => setIdleLabour(text)}
+            onChangeText={text => {
+              setShowMsg(false)
+              setIdleLabour(text)
+            }}
             mode={'outlined'}
             theme={Common.paperTheme}
             style={Layout.fill}
@@ -237,6 +183,8 @@ const LabourAttendance = () => {
           <Text style={[Layout.fill, Fonts.titleSmall, Fonts.textCenter]}>{(Number(idleLabour) + Number(nonskilledLabour) + Number(semiskilledLabour) + Number(skilledLabour)) || 0}</Text>
         </View>
 
+        {showMsg ? <Text style={[Gutters.smallTMargin, Fonts.textTiny, Fonts.textCenter, { color: Colors.error }]}>Total should be less than or equal to requested count</Text> : null}
+
         <TextInput
           label={'Remarks'}
           value={remarks}
@@ -247,8 +195,11 @@ const LabourAttendance = () => {
           numberOfLines={7}
         />
 
-        <Button mode='contained' color={Colors.primary} style={[Gutters.largeTMargin, Layout.selfCenter, { width: '50%' }]} onPress={() => contractorAttendance()}
-          >
+        <Button mode='contained' color={Colors.primary} 
+          style={[Gutters.largeTMargin, Layout.selfCenter, { width: '50%' }]} 
+          onPress={() => contractorAttendance()}
+          disabled={(Number(idleLabour) + Number(nonskilledLabour) + Number(semiskilledLabour) + Number(skilledLabour)) <= reqCount ? false : true}
+        >
             Submit
           </Button>
       </View>

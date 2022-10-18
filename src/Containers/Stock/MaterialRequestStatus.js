@@ -27,8 +27,8 @@ const MaterialRequestStatus = (props) => {
   const UserProject = useSelector(state => state.user.selectedProject)
   const Contractors = useSelector(state => state.user.contractors)
 
-  const [fromDate, setFromDate] = useState(moment('2022-07-01').format('DD/MM/YYYY'))
-  const [toDate, setToDate] = useState(moment('2022-09-01').format('DD/MM/YYYY'))
+  const [fromDate, setFromDate] = useState(moment(new Date()).format('YYYY-MM-DD'))
+  const [toDate, setToDate] = useState(moment(new Date()).format('YYYY-MM-DD'))
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false)
   const [isFrom, setIsFrom] = useState(null)
   const [selectedContractor, setSelectedContractor] = useState(Contractors[0]?.value)
@@ -36,6 +36,7 @@ const MaterialRequestStatus = (props) => {
 
   useEffect(() => {
     dispatch(getContractors({ "employee_id": LoginInfo?.employee_id, "project_structure_id": UserProject }))
+    getData()
   },[])
 
   const showDatePicker = () => {
@@ -47,23 +48,24 @@ const MaterialRequestStatus = (props) => {
   };
 
   const handleConfirm = (date) => {
-    console.log("A date has been picked: ", date, "processed dt", moment(new Date(date)).format('DD/MM/YYYY'));
+    // console.log("A date has been picked: ", date, "processed dt", moment(new Date(date)).format('DD/MM/YYYY'));
     if(isFrom){
-      setFromDate(moment(new Date(date)).format('DD/MM/YYYY'))
+      setFromDate(moment(new Date(date)).format('YYYY-MM-DD'))
       setIsFrom(null)
     } else {
-      setToDate(moment(new Date(date)).format('DD/MM/YYYY'))
+      setToDate(moment(new Date(date)).format('YYYY-MM-DD'))
       setIsFrom(null)
     }
     hideDatePicker();
   };
 
   const getData = () => {
+    console.log("from", fromDate, "to", toDate);
     let param = {
       "project_structure_id": UserProject, 
       "employee_id": LoginInfo?.employee_id, 
-      "from_date": moment(fromDate).format('YYYY-MM-DD'), 
-      "to_date": moment(toDate).format('YYYY-MM-DD'), 
+      "from_date": fromDate, // moment(new Date(fromDate)).format('YYYY-MM-DD'), 
+      "to_date": toDate, // moment(new Date(toDate)).format('YYYY-MM-DD'), 
       "contractor_id": selectedContractor
       // "project_structure_id":"3", "employee_id":"1", "from_date":"2022-07-01", "to_date":"2022-09-01", "contractor_id":""
     }
@@ -148,41 +150,36 @@ const MaterialRequestStatus = (props) => {
         </TouchableOpacity>
       </View>
 
-      <View style={[Gutters.largeTMargin, Layout.fill]}>
-
-        {Data?.length > 0 ? 
-          <View style={Layout.fill}>
-            <View style={[Layout.row, Gutters.smallVPadding, { borderWidth: 1, borderColor: Colors.grey }]}>
-              <Text style={[Fonts.titleTiny, { flex: 1, color: Colors.primary }]}>Date</Text>
-              <Text style={[Fonts.titleTiny, { flex: 2, color: Colors.primary }]}>Contractor</Text>
-              <Text style={[Fonts.titleTiny, Fonts.textCenter, { flex: 2, color: Colors.primary }]}>No. of Materials</Text>
-              <Text style={[Fonts.titleTiny, Fonts.textCenter, { flex: 1, color: Colors.primary }]}>Status</Text>
-            </View>
-
-            <FlatList
-              data={Data}
-              keyExtractor={(item, index) => item + index}
-              renderItem={({item,index}) => {
-                return(
-                  <TouchableOpacity 
-                    style={[Layout.row, Gutters.smallTMargin]}
-                    onPress={() => navigate('MaterialRequestDetail',{ item })}
-                  >
-                    <Text style={[Fonts.textSmall, { flex: 1 }]}>{moment(item?.material_request_date).format('DD/MM/YYYY')}</Text>
-                    <Text style={[Fonts.textSmall, { flex: 2 }]}>{item?.contractor_name}</Text>
-                    <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 2 }]}>{item?.material_count}</Text>
-                    <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 2 }]}>{item?.material_request_status}</Text>
-                  </TouchableOpacity>
-                )
-              }}
-            />
-          </View>
-        :
-          <View style={[Layout.fill, Layout.colCenter]}>
-            <Text style={Fonts.textRegular}>No Request Found</Text>
-          </View>
-        }
-      </View>
+      {/* <View style={[Layout.fill]}> */}
+      {Data?.length > 0 ? 
+        <FlatList
+          data={Data}
+          keyExtractor={(item, index) => item + index}
+          renderItem={({item,index}) => {
+            return(
+              <TouchableOpacity 
+                style={[Gutters.smallTMargin, Gutters.smallVPadding, Gutters.smallHPadding, { backgroundColor: Colors.white, borderRadius: 10 }]}
+                onPress={() => navigate('MaterialRequestDetail',{ item })}
+              >
+                <View style={[Layout.rowHSpaced, Gutters.tinyBMargin]}>
+                  <Text style={Fonts.textSmall}>{item?.material_request_date}</Text>
+                  <Text style={[Fonts.titleTiny, Layout.selfEnd]}>{item?.material_request_status}</Text>
+                </View>
+                
+                <Text style={[Fonts.textSmall, { flex: 1 }]}>Contractor: <Text style={Fonts.titleTiny}>{item?.contractor_name}</Text></Text>
+                <Text style={[Fonts.textSmall, { flex: 1 }]}>Material count: <Text style={Fonts.titleTiny}>{item?.material_count}</Text></Text>
+                <Text style={[Fonts.textSmall, { flex: 1 }]}>Structure: <Text style={Fonts.titleTiny}>{item?.structure_type}</Text></Text>
+                
+              </TouchableOpacity>
+            )
+          }}
+        />
+      :
+        <View style={[Layout.fill, Layout.colCenter]}>
+          <Text style={Fonts.textRegular}>No Request Found</Text>
+        </View>
+      }
+      {/* </View> */}
 
       {/* <FAB
         icon="plus"

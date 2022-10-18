@@ -97,7 +97,7 @@ export const AppNavigation = (props) => {
         <Stack.Screen name={'DailyReport'} component={DailyReport} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ', headerTintColor: Colors.primary }}/>
         <Stack.Screen name={'Notification'} component={Notification} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ', headerTintColor: Colors.primary }}/>
         <Stack.Screen name={'NotificationDetail'} component={NotificationDetail} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ', headerTintColor: Colors.primary }}/>
-        <Stack.Screen name={'Attendance'} component={Attendance} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ', headerTintColor: Colors.primary }}/>
+        <Stack.Screen name={'SelfAttendance'} component={Attendance} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ', headerTintColor: Colors.primary }}/>
         <Stack.Screen name={'LabourAttendance'} component={LabourAttendance} options={{ headerRight: () => <HeaderRightBtn/>,headerBackTitle: ' ', headerTintColor: Colors.primary }}/>
         <Stack.Screen name={'SendMaterial'} component={SendMaterial} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ', headerTintColor: Colors.primary }}/>
         <Stack.Screen name={'ReceiveMaterial'} component={ReceiveMaterial} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ', headerTintColor: Colors.primary }}/>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, View, Text, ScrollView, FlatList } from 'react-native'
+import { ActivityIndicator, View, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@/Hooks'
@@ -11,6 +11,7 @@ import { Config } from '@/Config'
 import Request from '@/Requests/Core'
 import { useSelector, useDispatch } from 'react-redux'
 import { isObject } from 'lodash'
+import FontAwesome from 'react-native-vector-icons/FontAwesome5'
 
 const StockTransfer = (props) => {
   const { Layout, Gutters, Fonts, Colors } = useTheme()
@@ -22,13 +23,14 @@ const StockTransfer = (props) => {
 
   const [listDt, setListDt] = useState([])
   const [loading, setLoading] = useState(false)
+  const [receiveMode, setReceiveMode] = useState(false)
+  const [selectedRecord, setSelectedRecord] = useState()
 
   useEffect(() => {
     // getData()
   },[])
 
   useEffect(() => {
-    
     props.navigation.addListener('focus', () => {
       console.log("in stocktransfer,........")
       getData()
@@ -69,7 +71,8 @@ const StockTransfer = (props) => {
   }
 
   const receiveAction = () => {
-    navigate('ReceiveMaterial')
+    // navigate('ReceiveMaterial')
+    setReceiveMode(true)
   }
 
   return (
@@ -96,7 +99,14 @@ const StockTransfer = (props) => {
           return(
             <View key={index} style={[Gutters.smallHPadding, Gutters.smallVPadding, Gutters.smallTMargin, Gutters.smallHMargin, { backgroundColor: Colors.white, borderRadius: 10 }]}>
               <View style={[Layout.rowHSpaced]}>
-                <Text style={[Fonts.titleTiny]}>{item?.stock_transfer_date}</Text>
+                <View style={[Layout.rowHCenter]}>
+                {(receiveMode && item?.transfer_status == "Transit") ? 
+                  <TouchableOpacity onPress={() => setSelectedRecord(item)} style={Gutters.smallRMargin}>
+                    <FontAwesome name={selectedRecord?.stock_transfer_id == item?.stock_transfer_id ? 'dot-circle' : 'circle'} color={Colors.primary} size={16}/>
+                  </TouchableOpacity>
+                : null}
+                  <Text style={[Fonts.titleTiny]}>{item?.stock_transfer_date}</Text>
+                </View>
                 <Text style={[Fonts.titleTiny,{ color: Colors.primary }]}>{item?.transfer_status}</Text>
               </View>
               <View style={[Layout.rowHSpaced, Gutters.smallTMargin]}>
@@ -110,25 +120,19 @@ const StockTransfer = (props) => {
                   <Text style={[Layout.fill, Gutters.tinyHMargin, Gutters.tinyTMargin, Fonts.textSmall]}>{item?.to_place}</Text>
                 </View>
               </View>
+
+              {(selectedRecord?.stock_transfer_id == item?.stock_transfer_id && item?.transfer_status == "Transit") &&
+                <TouchableOpacity 
+                  style={[Layout.selfEnd, { width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.primary, alignItems:'center', justifyContent:'center' }]}
+                  onPress={() => navigate('ReceiveMaterial', { item })}
+                >
+                  <FontAwesome name={'arrow-right'} color={Colors.white} size={22}/>
+                </TouchableOpacity>
+              }
             </View>
           )
         }}
       />
-      {/* <View style={[Gutters.largeTMargin, Gutters.smallHPadding]}>
-        <View style={[Layout.row]}>
-          <Text style={[Fonts.titleTiny, { flex: 2 }]}>Material Name</Text>
-          <Text style={[Fonts.titleTiny, Fonts.textCenter, { flex: 0.6 }]}>Qty</Text>
-          <Text style={[Fonts.titleTiny, Fonts.textCenter, { flex: 0.6 }]}>Unit</Text>
-        </View>
-
-        <ScrollView>
-          <View style={[Layout.row, Gutters.smallTMargin]}>
-            <Text style={[Fonts.textSmall, { flex: 2 }]}>14" cutting wheel</Text>
-            <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 0.6 }]}>3</Text>
-            <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 0.6 }]}>Nos</Text>
-          </View>
-        </ScrollView>
-      </View> */}
     </View>
   )
 }

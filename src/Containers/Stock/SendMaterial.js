@@ -203,23 +203,38 @@ const SendMaterial = (props) => {
         keyExtractor={(item, index) => item + index}
         renderItem={({item,index}) => {
           return(
-            <View key={index} style={[Gutters.smallHPadding, Gutters.smallVPadding, Gutters.smallTMargin, Gutters.smallHMargin, { backgroundColor: Colors.white, borderRadius: 10 }]}>
-              <View style={[Layout.rowHSpaced]}>
-                <Text style={[Fonts.titleTiny]}>{item?.stock_transfer_date}</Text>
-                <Text style={[Fonts.titleTiny,{ color: Colors.primary }]}>{item?.transfer_status}</Text>
-              </View>
-              <View style={[Layout.rowHSpaced, Gutters.smallTMargin]}>
-                <View style={[Layout.fill, Layout.center]}>
-                  <Text style={{ color: Colors.grey }}>From</Text>
-                  <Text style={[Layout.fill, Gutters.tinyHMargin, Gutters.tinyTMargin, Fonts.textSmall]}>{item?.from_place}</Text>
+            <View key={index} style={[Gutters.smallHPadding, Gutters.smallVPadding, Gutters.smallBMargin, Gutters.smallHMargin, { backgroundColor: Colors.white, borderRadius: 10 }]}>
+              <Text style={[Fonts.titleTiny,Gutters.smallBMargin,{ color: Colors.primary }]}>{item?.material?.material_name} - {item?.material?.unit}</Text>
+              <View style={Layout.rowHSpaced}>
+                <View style={Layout.center}>
+                  <Text style={Fonts.textSmall}>Stock in Hand</Text>
+                  <Text style={[Fonts.titleSmall,Gutters.tinyTMargin]}>{item?.stock}</Text>
                 </View>
 
-                <View style={[Layout.fill, Layout.center]}>
-                  <Text style={{ color: Colors.grey }}>To</Text>
-                  <Text style={[Layout.fill, Gutters.tinyHMargin, Gutters.tinyTMargin, Fonts.textSmall]}>{item?.to_place}</Text>
+                <View style={Layout.center}>
+                  <Text style={Fonts.textSmall}>Requested Qty</Text>
+                  <Text style={[Fonts.titleSmall,Gutters.tinyTMargin]}>{item?.requested}</Text>
                 </View>
               </View>
             </View>
+
+            // <View key={index} style={[Gutters.smallHPadding, Gutters.smallVPadding, Gutters.smallTMargin, Gutters.smallHMargin, { backgroundColor: Colors.white, borderRadius: 10 }]}>
+            //   <View style={[Layout.rowHSpaced]}>
+            //     <Text style={[Fonts.titleTiny]}>{item?.stock_transfer_date}</Text>
+            //     <Text style={[Fonts.titleTiny,{ color: Colors.primary }]}>{item?.transfer_status}</Text>
+            //   </View>
+            //   <View style={[Layout.rowHSpaced, Gutters.smallTMargin]}>
+            //     <View style={[Layout.fill, Layout.center]}>
+            //       <Text style={{ color: Colors.grey }}>From</Text>
+            //       <Text style={[Layout.fill, Gutters.tinyHMargin, Gutters.tinyTMargin, Fonts.textSmall]}>{item?.from_place}</Text>
+            //     </View>
+
+            //     <View style={[Layout.fill, Layout.center]}>
+            //       <Text style={{ color: Colors.grey }}>To</Text>
+            //       <Text style={[Layout.fill, Gutters.tinyHMargin, Gutters.tinyTMargin, Fonts.textSmall]}>{item?.to_place}</Text>
+            //     </View>
+            //   </View>
+            // </View>
           )
         }}
       />

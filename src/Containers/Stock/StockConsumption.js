@@ -130,7 +130,7 @@ const StockConsumption = (props) => {
           value={selectedStore}
           onValueChange={value => {
             setSelectedStore(value)
-            getData()
+            // getData()
           }}
           // useNativeAndroidPickerStyle={false}
           style={Common.pickerSelectStyles}

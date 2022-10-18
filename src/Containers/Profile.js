@@ -15,6 +15,7 @@ import { Overlay, CheckBox } from 'react-native-elements'
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker'
 import { ToastMessage } from '@/Utils'
 import { MessageTypes } from '@/Theme/Variables'
+import FastImage from 'react-native-fast-image'
 
 const Profile = () => {
   const { Layout, Gutters, Fonts, Colors } = useTheme()
@@ -31,6 +32,7 @@ const Profile = () => {
   const [phone, setPhone] = useState(Profile?.present_mobile_no)
   const [address, setAddress] = useState(Profile?.present_address)
   const [profImage, setProfImage] = useState(Profile?.profile_image)
+  const [refresh, setRefresh] = useState(false)
 
   const [oldpwd, setOldPwd] = useState('')
   const [newpwd, setNewPwd] = useState('')
@@ -82,6 +84,7 @@ const Profile = () => {
       console.log("profile update response", response)
       setLoading(false)
       dispatch(getProfileDetails({ "employee_id": LoginInfo?.employee_id }))
+      setRefresh(!refresh)
     }).catch(error => {
       console.log("profile update error", error)
       setLoading(false)
@@ -264,8 +267,10 @@ const Profile = () => {
     }).then(response => {
       console.log("profile image update", response)
       setLoading(false)
-      if(response?.status == 1)
+      if(response?.profile?.status == "1"){
         dispatch(getProfileDetails({ "employee_id": LoginInfo?.employee_id }))
+        setRefresh(!refresh)
+      }
     }).catch(error => {
       setLoading(false)
       console.log("profile image error", error)
@@ -277,8 +282,15 @@ const Profile = () => {
       <View style={[Gutters.smallHPadding, Gutters.smallVPadding]}>
         {/* <Text style={Fonts.textCenter}>{'Profile'}</Text> */}
         <View style={[Layout.selfCenter, Layout.center]}>
-          {profImage ? <Image source={{ uri: `${Config.IMAGE_BASEURL}${profImage}`}} style={{ width: 100, height: 100, borderRadius: 50, borderWidth: 2, borderColor: Colors.primary }}/> : <FontAwesome color={'grey'} name={'user-circle'} solid size={80}/>}
-          {/* <Image source={{ uri: `${Config.IMAGE_BASEURL}${profImage}` }} style={{ width: 100, height: 100, borderRadius: 50, borderWidth: 2, borderColor: Colors.primary }}/> */}
+          {profImage ? 
+            // <FastImage key={new Date()} 
+            //   source={{ uri: `${Config.IMAGE_BASEURL}${profImage}`, cache: 'immutable' }} 
+            //   style={{ width: 100, height: 100, borderRadius: 50, borderWidth: 2, borderColor: Colors.primary }}
+            // /> 
+            <Image source={{ uri: `${Config.IMAGE_BASEURL}${profImage}${'?' + new Date()}`, cache: 'reload' }} style={{ width: 100, height: 100, borderRadius: 50, borderWidth: 2, borderColor: Colors.primary }}/>
+          : 
+            <FontAwesome color={'grey'} name={'user-circle'} solid size={80}/>
+          }
           
           <TouchableOpacity style={{ padding: 10, marginTop: -20, marginLeft: 80 }} onPress={() => setShowOptions(true)}>
             <FontAwesome color={Colors.primary} size={25} name={'camera'}/>
