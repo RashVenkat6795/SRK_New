@@ -23,7 +23,7 @@ const StockList = () => {
   const StoreProjects = useSelector(state => state.user.storeProjects)
   const UserProject = useSelector(state => state.user.selectedProject)
 
-  const [selectedStore, setSelectedStore] = useState(StoreProjects[0]?.id)
+  const [selectedStore, setSelectedStore] = useState(StoreProjects[0]?.value)
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
 

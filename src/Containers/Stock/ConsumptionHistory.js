@@ -23,14 +23,15 @@ const ConsumptionHistory = () => {
   const StoreProjects = useSelector(state => state.user.storeProjects)
   const Stores = useSelector(state => state.user.stores)
 
-  const [selectedStore, setSelectedStore] = useState(Stores[0]?.value)
+  const [selectedStore, setSelectedStore] = useState(StoreProjects[0]?.value)
   // const [selectedStore, setSelectedStore] = useState(StoreProjects[0]?.value)
-  const [fromDate, setFromDate] = useState(moment(new Date()).format('DD/MM/YYYY'))
-  const [toDate, setToDate] = useState(moment(new Date()).format('DD/MM/YYYY'))
+  const [fromDate, setFromDate] = useState(moment(new Date()).format('YYYY-MM-DD'))
+  const [toDate, setToDate] = useState(moment(new Date()).format('YYYY-MM-DD'))
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false)
   const [isFrom, setIsFrom] = useState(null)
   const [listDt, setListDt] = useState(null)
   const [message, setMessage] = useState(false)
+  const [refresh, setRefresh] = useState(false)
 
   useEffect(() => {
     dispatch(getStores({ }))
@@ -47,12 +48,12 @@ const ConsumptionHistory = () => {
   };
 
   const handleConfirm = (date) => {
-    console.log("A date has been picked: ", date, "processed dt", moment(new Date(date)).format('DD/MM/YYYY'));
+    console.log("A date has been picked: ", date, "processed dt", moment(new Date(date)).format('YYYY-MM-DD'));
     if(isFrom){
-      setFromDate(moment(new Date(date)).format('DD/MM/YYYY'))
+      setFromDate(moment(new Date(date)).format('YYYY-MM-DD'))
       setIsFrom(null)
     } else {
-      setToDate(moment(new Date(date)).format('DD/MM/YYYY'))
+      setToDate(moment(new Date(date)).format('YYYY-MM-DD'))
       setIsFrom(null)
     }
     hideDatePicker();
@@ -61,11 +62,11 @@ const ConsumptionHistory = () => {
   const getData = () => {
     let params = {
       project_store_id: selectedStore,
-      stock_consumption_from_date: moment(new Date(fromDate)).format('YYYY-MM-DD'),
-      stock_consumption_to_date: moment(new Date(toDate)).format('YYYY-MM-DD')
+      stock_consumption_from_date: fromDate,
+      stock_consumption_to_date: toDate
       // "project_store_id":"1", "stock_consumption_from_date":"2022-08-05", "stock_consumption_to_date":"2022-08-06"
     }
-    // console.log("gethistory param", params)
+    console.log("gethistory param", params)
     Request({ 
       method: 'POST',
       url: Config.GET_CONSUMPTIONHISTORY_DATEWISE,
@@ -74,6 +75,7 @@ const ConsumptionHistory = () => {
       console.log("get history response", response)
       if(response && response?.consumption_history?.length > 0){
         setListDt(response?.consumption_history)
+        setRefresh(!refresh)
       } else {
         setListDt([])
       }
@@ -133,7 +135,7 @@ const ConsumptionHistory = () => {
           /> */}
           <RNPickerSelect
             placeholder={{}}
-            items={Stores}
+            items={StoreProjects}
             value={selectedStore}
             onValueChange={value => {
               setSelectedStore(value)

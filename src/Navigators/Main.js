@@ -10,7 +10,7 @@ import { useTheme } from '@/Hooks'
 import { 
   Login, ForgotPassword,
   Home, MaterialRequest, MaterialRequestDetail, Profile, StockConsumption, WorkReport,  ConsumptionHistory, Attendance,
-  Stock, StockList, StockDetails, StockTransfer, MaterialRequestStatus, DailyReport, MonthlyReport, Notification, NotificationDetail, SendMaterial, ReceiveMaterial, AttendanceMain, LabourAttendance
+  Stock, StockList, StockDetails, StockTransfer, MaterialRequestStatus, DailyReport, MonthlyReport, Notification, NotificationDetail, SendMaterial, ReceiveMaterial, AttendanceMain, LabourAttendance, StockTransferDetail
 } from '@/Containers'
 import { SvgIcons } from '@/Components'
 import { navigate } from './utils'
@@ -92,6 +92,7 @@ export const AppNavigation = (props) => {
         <Stack.Screen name={'StockDetails'} component={StockDetails} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ', headerTintColor: Colors.primary }}/>
         <Stack.Screen name={'ConsumptionHistory'} component={ConsumptionHistory} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ' }}/>
         <Stack.Screen name={'StockTransfer'} component={StockTransfer} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ', headerTintColor: Colors.primary }}/>
+        <Stack.Screen name={'StockTransferDetail'} component={StockTransferDetail} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ', headerTintColor: Colors.primary, headerTitle: 'Details' }}/>
         <Stack.Screen name={'MaterialRequestStatus'} component={MaterialRequestStatus} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ', headerTintColor: Colors.primary }}/>
         <Stack.Screen name={'MonthlyReport'} component={MonthlyReport} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ', headerTintColor: Colors.primary }}/>
         <Stack.Screen name={'DailyReport'} component={DailyReport} options={{ headerRight: () => <HeaderRightBtn/>, headerBackTitle: ' ', headerTintColor: Colors.primary }}/>

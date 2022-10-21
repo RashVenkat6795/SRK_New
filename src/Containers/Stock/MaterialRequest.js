@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, View, Text, ScrollView, FlatList, Dimensions, Platform } from 'react-native'
+import { ActivityIndicator, View, Text, ScrollView, FlatList, Dimensions, Platform, TouchableOpacity } from 'react-native'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@/Hooks'
 import { Brand, MyButton } from '@/Components'
@@ -34,11 +34,14 @@ const MaterialRequest = (props) => {
   const [showModal, setShowModal] = useState(false)
   const [list, setList] = useState([])
   const [loading, setLoading] = useState(false)
-
+  const [refresh, setRefresh] = useState(false)
+  const [materialOptions, setMaterialOptions] = useState(Materials)
   const [selectedMaterial, setSelectedMaterial] = useState()
   const [selectMaterialObj, setSelectedMaterialObj] = useState()
   const [stock, setStock] = useState()
   const [qty, setQty] = useState()
+  const [value, setValue] = useState()
+  const [totValue, setTotValue] = useState()
 
   useEffect(() => {
     dispatch(getContractors({ "employee_id": LoginInfo?.employee_id, "project_structure_id": UserProject }))
@@ -71,15 +74,25 @@ const MaterialRequest = (props) => {
       dt.push({
         material: selectMaterialObj, 
         stock,
-        requested: qty
+        requested: qty, 
+        value,
+        totValue
       })
-      setList(dt)
+      setList(dt);
+      setStock(0); setQty(0)
+      setSelectedMaterial(null)
+      setSelectedMaterialObj(null);
+      setValue(0); setTotValue(0);
       setShowModal(false)
-      console.log("list.....", list)
+      setRefresh(!refresh)
+      // const myArray = materialOptions.filter(ar => !list.find(rm => (rm.material.material_id === ar.material_id ) ))
+      // console.log("myArray.....", myArray)
+      // setMaterialOptions(myArray)
     } else {
       setStock(0); setQty(0)
       setSelectedMaterial(null)
       setSelectedMaterialObj(null)
+      setValue(0); setTotValue(0);
       setShowModal(false)
     }
   }
@@ -92,7 +105,8 @@ const MaterialRequest = (props) => {
         material_id: item?.material?.material_id,
         stock_in_hand: item?.stock,
         material_request_quantity: item?.requested,
-        "material_request_value": "4060" // entered value
+        material_request_rate: item?.value,
+        material_request_value: item?.totValue
       })
     })
     let paramObj = {
@@ -138,20 +152,69 @@ const MaterialRequest = (props) => {
       <Text style={[Fonts.titleTiny, Gutters.largeVMargin, { color: Colors.primary }]}>Request on Date {moment(new Date()).format('DD/MM/YYYY')}</Text>
       <FlatList
         data={list}
+        extraData={list}
         keyExtractor={(item, index) => item + index}
         renderItem={({item,index}) => {
           return(
             <View key={index} style={[Gutters.smallHPadding, Gutters.smallVPadding, Gutters.smallBMargin,{ backgroundColor: Colors.white, borderRadius: 10 }]}>
-              <Text style={[Fonts.titleTiny,Gutters.smallBMargin,{ color: Colors.primary }]}>{item?.material?.material_name} - {item?.material?.unit}</Text>
               <View style={Layout.rowHSpaced}>
-                <View style={Layout.center}>
-                  <Text style={Fonts.textSmall}>Stock in Hand</Text>
-                  <Text style={[Fonts.titleSmall,Gutters.tinyTMargin]}>{item?.stock}</Text>
+                <Text style={[Fonts.titleTiny,Gutters.smallBMargin, Layout.fill, { color: Colors.primary }]}>{item?.material?.material_name} - {item?.material?.unit}</Text>
+                <TouchableOpacity style={{ padding: 10 }}
+                  onPress={() => {
+                    const newArr = list.filter(obj => { 
+                      return obj?.material?.material_id !== item?.material?.material_id
+                    })
+                    setList(newArr)
+                    setRefresh(!refresh)
+                  }}
+                >
+                  <FontAwesome name={'trash'} color={Colors.error} size={16}/>
+                </TouchableOpacity>
+              </View>
+
+              <View style={Layout.rowHCenter}>
+                <Text style={Fonts.textSmall}>Stock in Hand  </Text>
+                <Text style={[Fonts.titleTiny]}>{item?.stock}</Text>
+              </View>
+
+              <View style={[Layout.rowHSpaced, Gutters.tinyTMargin]}>
+                <View style={Layout.fill}>
+                  <Text style={[Fonts.textSmall, Gutters.tinyBMargin]}>Requested Qty</Text>
+                  <TextInput
+                    value={item?.requested}
+                    onChangeText={text => {
+                      const index = list.findIndex(mat => mat?.material?.material_id === item?.material?.material_id)
+                      list[index].requested = text
+                      setList(list)
+                      setRefresh(!refresh)
+                    }}
+                    style={{ width:'90%', padding: 0, margin: 0, height: 40, textAlign: 'center' }}
+                    theme={Common.paperTheme}
+                    keyboardType={'number-pad'}
+                  />
                 </View>
 
-                <View style={Layout.center}>
-                  <Text style={Fonts.textSmall}>Requested Qty</Text>
-                  <Text style={[Fonts.titleSmall,Gutters.tinyTMargin]}>{item?.requested}</Text>
+                <View style={[Layout.fill]}>
+                  <Text style={[Fonts.textSmall, Gutters.tinyBMargin]}>Rate</Text>
+                  <TextInput
+                    value={item?.value}
+                    onChangeText={text => {
+                      const index = list.findIndex(mat => mat?.material?.material_id === item?.material?.material_id)
+                      list[index].value = text
+                      list[index].totValue = item.requested * text
+                      setList(list)
+                      setRefresh(!refresh)
+                    }}
+                    style={{ width:'90%', padding: 0, margin: 0, height: 40, textAlign: 'center' }}
+                    theme={Common.paperTheme}
+                    keyboardType={'number-pad'}
+                  />
+                </View>
+
+                <View style={[Layout.fill, Layout.center]}>
+                  <Text style={[Fonts.textSmall, Gutters.tinyBMargin]}>Value</Text>
+                  <Text style={Fonts.titleSmall}>{item?.totValue}</Text>
+                  {/* <Text style={[Fonts.titleSmall,Gutters.tinyTMargin]}>{item?.requested}</Text> */}
                 </View>
               </View>
             </View>
@@ -194,32 +257,54 @@ const MaterialRequest = (props) => {
 
           {selectedMaterial && <>
             <View style={[Layout.rowHSpaced, Gutters.regularTMargin]}>
-              <View style={[Layout.center, Layout.fill]}>
-                <Text>Unit</Text>
-                <Text style={[Fonts.titleSmall, Gutters.smallTMargin]}>{selectMaterialObj?.unit}</Text>
-              </View>
+              <Text>Unit <Text style={[Fonts.titleTiny, Gutters.smallTMargin]}>{selectMaterialObj?.unit}</Text></Text>
+              <Text>Stock in Hand <Text style={[Fonts.titleTiny, Gutters.smallTMargin]}>{stock}</Text></Text>
+            </View>
 
-              <View style={[Layout.center, Layout.fill]}>
-                <Text>Stock in Hand</Text>
-                <Text style={[Fonts.titleSmall, Gutters.smallTMargin]}>{stock}</Text>
-              </View>
-
+            <View style={[Layout.rowHSpaced, Gutters.regularTMargin]}>
               <View style={[Layout.center, Layout.fill]}>
                 <Text style={Gutters.smallBMargin}>Quantity</Text>
                 <TextInput
                   value={qty}
                   onChangeText={text => setQty(text)}
-                  style={{ width:'100%', padding: 0, margin: 0, height: 40, textAlign: 'center' }}
+                  style={{ width:'90%', padding: 0, margin: 0, height: 40, textAlign: 'center' }}
                   theme={Common.paperTheme}
                   keyboardType={'number-pad'}
                 />
+              </View>
+
+              <View style={[Layout.center, Layout.fill]}>
+                <Text style={Gutters.smallBMargin}>Rate</Text>
+                <TextInput
+                  value={value}
+                  onChangeText={text => {
+                    setValue(text)
+                    let total = qty * text
+                    setTotValue(total)
+                    setRefresh(!refresh)
+                  }}
+                  style={{ width:'90%', padding: 0, margin: 0, height: 40, textAlign: 'center' }}
+                  theme={Common.paperTheme}
+                  keyboardType={'number-pad'}
+                />
+              </View>
+
+              <View style={[Layout.center, Layout.fill]}>
+                <Text style={Gutters.smallBMargin}>Value</Text>
+                <Text style={Fonts.titleTiny}>{totValue}</Text>
               </View>
             </View>
             
             {/* {qty > Number(stock) && <Text style={[Gutters.smallTMargin, Fonts.textTiny, Fonts.textCenter, { color: Colors.error }]}>* Entered quantity is greater than in-hand stock quantity</Text>} */}
 
             <View style={[Layout.rowHSpaced]}>
-              <Button mode='contained' color={Colors.error} style={[Gutters.largeTMargin, Layout.selfCenter, { width: '40%' }]} onPress={() => setShowModal(false)}
+              <Button mode='contained' color={Colors.error} style={[Gutters.largeTMargin, Layout.selfCenter, { width: '40%' }]} onPress={() => {
+                setStock(0); setQty(0)
+                setSelectedMaterial(null)
+                setSelectedMaterialObj(null)
+                setValue(0); setTotValue(0);
+                setShowModal(false)
+              }}
               >
                 Cancel
               </Button>

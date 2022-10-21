@@ -20,6 +20,7 @@ export const Config = {
   GET_DAILYSTOCK_PROJECTSTOREWISE: 'stock_consumption.php',
   ADD_STOCK_TRANSFER: 'stock_transfer_add.php',
   STOCK_TRANSFER: 'stock_transfer_list.php',
+  STOCK_TRANSFER_VIEW: 'stock_transfer_view.php',
   STOCK_TRANSFER_RECEIVERNOTE: 'receiver_note.php',
   STOCK_TRANSFER_RECEIVERNOTE_UPDATE: 'receiver_note_update.php',
 

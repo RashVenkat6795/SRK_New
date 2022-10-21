@@ -97,7 +97,10 @@ const StockTransfer = (props) => {
         keyExtractor={(item, index) => item + index}
         renderItem={({item,index}) => {
           return(
-            <View key={index} style={[Gutters.smallHPadding, Gutters.smallVPadding, Gutters.smallTMargin, Gutters.smallHMargin, { backgroundColor: Colors.white, borderRadius: 10 }]}>
+            <TouchableOpacity key={index} 
+              style={[Gutters.smallHPadding, Gutters.smallVPadding, Gutters.smallTMargin, Gutters.smallHMargin, { backgroundColor: Colors.white, borderRadius: 10 }]}
+              onPress={() => navigate('StockTransferDetail', { item })}
+            >
               <View style={[Layout.rowHSpaced]}>
                 <View style={[Layout.rowHCenter]}>
                 {(receiveMode && item?.transfer_status == "Transit") ? 
@@ -129,7 +132,7 @@ const StockTransfer = (props) => {
                   <FontAwesome name={'arrow-right'} color={Colors.white} size={22}/>
                 </TouchableOpacity>
               }
-            </View>
+            </TouchableOpacity>
           )
         }}
       />

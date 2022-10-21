@@ -15,6 +15,8 @@ import Request from '@/Requests/Core'
 import { Config } from '@/Config'
 import { ToastMessage } from '@/Utils'
 import { MessageTypes } from '@/Theme/Variables'
+import { TouchableOpacity } from 'react-native'
+import moment from 'moment'
 
 const { width, height } = Dimensions.get('window')
 
@@ -29,10 +31,11 @@ const StockConsumption = (props) => {
   const UserProject = useSelector(state => state.user.selectedProject)
   const LoginInfo = useSelector(state => state.user.loginInfo)
 
-  const [selectedStore, setSelectedStore] = useState(StoreProjects[0]?.id)
+  const [selectedStore, setSelectedStore] = useState(StoreProjects[0]?.value)
   const [showModal, setShowModal] = useState(false)
   const [list, setList] = useState([])
   const [loading, setLoading] = useState(false)
+  const [refresh, setRefresh] = useState(false)
 
   const [selectedMaterial, setSelectedMaterial] = useState()
   const [selectMaterialObj, setSelectedMaterialObj] = useState()
@@ -72,18 +75,24 @@ const StockConsumption = (props) => {
     //   setShowModal(false)
     // } else {
     // }
-    let dt = [...list]
-    dt.push({
-      material: selectMaterialObj, 
-      stock,
-      used: usedQty,
-      scrap: scrapQty
-    })
-    setList(dt)
-    setStock(0); setUsedQty(0); setScrapQty(0);
-    setSelectedMaterial(null); setSelectedMaterialObj(null);
-    setShowModal(false)
-    console.log("list.....", list)
+    if((Number(usedQty) + Number(scrapQty)) <= stock){
+      let dt = [...list]
+      dt.push({
+        material: selectMaterialObj, 
+        stock,
+        used: usedQty,
+        scrap: scrapQty
+      })
+      setList(dt)
+      setStock(0); setUsedQty(0); setScrapQty(0);
+      setSelectedMaterial(null); setSelectedMaterialObj(null);
+      setShowModal(false)
+      console.log("list.....", list)
+    } else {
+      setStock(0); setUsedQty(0); setScrapQty(0);
+      setSelectedMaterial(null); setSelectedMaterialObj(null);
+      setShowModal(false)
+    }
   }
 
   const updateConsumption = () => {
@@ -97,9 +106,9 @@ const StockConsumption = (props) => {
       })
     })
     let paramObj = {
-      "project_store_id":"1", 
-      "stock_consumption_date":"2022-08-06", 
-      "employee_id":"2", 
+      "project_store_id": selectedStore, //"1", 
+      "stock_consumption_date": moment(new Date()).format('YYYY-MM-DD'), // "2022-08-06", 
+      "employee_id": LoginInfo?.employee_id, //"2", 
       "stock_consumption": dataArr
     }
     console.log("stock consumption update param", paramObj)
@@ -144,7 +153,22 @@ const StockConsumption = (props) => {
         renderItem={({item,index}) => {
           return(
             <View key={index} style={[Gutters.smallHPadding, Gutters.smallVPadding, Gutters.smallTMargin, Gutters.smallHMargin, { backgroundColor: Colors.white, borderRadius: 10 }]}>
-              <Text style={[Fonts.titleTiny,Gutters.smallBMargin,{ color: Colors.primary }]}>{item?.material?.material_name} - {item?.material?.unit}</Text>
+              <View style={Layout.rowHSpaced}>
+                <Text style={[Fonts.titleTiny,Gutters.smallBMargin, Layout.fill, { color: Colors.primary }]}>{item?.material?.material_name} - {item?.material?.unit}</Text>
+
+                <TouchableOpacity style={{ padding: 10 }}
+                  onPress={() => {
+                    const newArr = list.filter(obj => {
+                      return obj?.material?.material_id !== item?.material?.material_id
+                    })
+                    setList(newArr)
+                    setRefresh(!refresh)
+                  }}
+                >
+                  <FontAwesome name={'trash'} color={Colors.error} size={16}/>
+                </TouchableOpacity>
+              </View>
+
               <View style={Layout.rowHSpaced}>
                 <View style={Layout.center}>
                   <Text style={Fonts.textSmall}>Stock in Hand</Text>
@@ -153,12 +177,36 @@ const StockConsumption = (props) => {
 
                 <View style={Layout.center}>
                   <Text style={Fonts.textSmall}>Used</Text>
-                  <Text style={[Fonts.titleSmall,Gutters.tinyTMargin]}>{item?.used}</Text>
+                  {/* <Text style={[Fonts.titleSmall,Gutters.tinyTMargin]}>{item?.used}</Text> */}
+                  <TextInput
+                    value={item?.used}
+                    onChangeText={text => {
+                      const index = list.findIndex(mat => mat?.material?.material_id === item?.material?.material_id)
+                      list[index].used = text
+                      setList(list)
+                      setRefresh(!refresh)
+                    }}
+                    style={{ width:'100%', padding: 0, margin: 0, height: 40, textAlign: 'center' }}
+                    theme={Common.paperTheme}
+                    keyboardType={'number-pad'}
+                  />
                 </View>
 
                 <View style={Layout.center}>
                   <Text style={Fonts.textSmall}>Scrap</Text>
-                  <Text style={[Fonts.titleSmall,Gutters.tinyTMargin]}>{item?.scrap}</Text>
+                  {/* <Text style={[Fonts.titleSmall,Gutters.tinyTMargin]}>{item?.scrap}</Text> */}
+                  <TextInput
+                    value={item?.scrap}
+                    onChangeText={text => {
+                      const index = list.findIndex(mat => mat?.material?.material_id === item?.material?.material_id)
+                      list[index].scrap = text
+                      setList(list)
+                      setRefresh(!refresh)
+                    }}
+                    style={{ width:'100%', padding: 0, margin: 0, height: 40, textAlign: 'center' }}
+                    theme={Common.paperTheme}
+                    keyboardType={'number-pad'}
+                  />
                 </View>
               </View>
             </View>
@@ -230,10 +278,17 @@ const StockConsumption = (props) => {
               </View>
             </View>
 
-            <Button mode='contained' color={Colors.primary} style={[Gutters.largeTMargin, Layout.selfCenter, { width: '80%' }]} onPress={() => addMaterial()}
-            >
-              Add Consumption
-            </Button>
+            <View style={[Layout.rowHSpaced]}>
+              <Button mode='contained' color={Colors.error} style={[Gutters.largeTMargin, Layout.selfCenter, { width: '30%' }]} onPress={() => setShowModal(false)}
+              >
+                Cancel
+              </Button>
+
+              <Button mode='contained' color={Colors.primary} style={[Gutters.largeTMargin, Layout.selfCenter, { width: '70%' }]} onPress={() => addMaterial()}
+              >
+                Add Consumption
+              </Button>
+            </View>
           </>}
         </View>
       </Overlay>

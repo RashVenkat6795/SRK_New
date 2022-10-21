@@ -55,22 +55,37 @@ const MaterialRequestDetail = (props) => {
 
       {Data?.material_request_details?.length > 0 ?
         <View style={Gutters.largeTMargin}>
-          <View style={[Layout.row, Gutters.smallVPadding, { borderWidth: 1, borderColor: Colors.grey }]}>
+          {/* <View style={[Layout.row, Gutters.smallVPadding, { borderWidth: 1, borderColor: Colors.grey }]}>
             <Text style={[Fonts.titleTiny, { flex: 2, color: Colors.primary }]}>Material</Text>
             <Text style={[Fonts.titleTiny, { flex: 1, color: Colors.primary }]}>Qty</Text>
             <Text style={[Fonts.titleTiny, Fonts.textCenter, { flex: 1, color: Colors.primary }]}>Unit</Text>
-            {/* <Text style={[Fonts.titleTiny, Fonts.textCenter, { flex: 1, color: Colors.primary }]}>Status</Text> */}
-          </View>
+          </View> */}
           <FlatList
             data={Data?.material_request_details}
             keyExtractor={(item, index) => item + index}
             renderItem={({item,index}) => {
               return(
-                <View style={[Layout.row, Gutters.smallVPadding, { borderWidth: StyleSheet.hairlineWidth, borderColor: Colors.grey }]}>
+                <View style={[Gutters.smallVPadding, Gutters.smallHPadding, { borderWidth: StyleSheet.hairlineWidth, borderColor: Colors.grey, backgroundColor: Colors.white, borderRadius: 7 }]}>
                   <Text style={[Fonts.titleTiny, { flex: 2 }]}>{item?.material_name}</Text>
-                  <Text style={[Fonts.titleTiny, { flex: 1 }]}>{item?.approved_quantity}</Text>
-                  <Text style={[Fonts.titleTiny, Fonts.textCenter, { flex: 1 }]}>{item?.unit}</Text>
-                  {/* <Text style={[Fonts.titleTiny, Fonts.textCenter, { flex: 1 }]}>Status</Text> */}
+
+                  <View style={[Layout.rowHSpaced, Gutters.smallTMargin]}>
+                    <View style={[Layout.fill, Layout.center]}>
+                      <Text style={{ color: Colors.grey }}>Unit</Text>
+                      <Text style={[Layout.fill, Gutters.tinyHMargin, Gutters.tinyTMargin, Fonts.titleSmall]}>{item?.unit}</Text>
+                    </View>
+
+                    <View style={[Layout.fill, Layout.center]}>
+                      <Text style={{ color: Colors.grey }}>Requested</Text>
+                      <Text style={[Layout.fill, Gutters.tinyHMargin, Gutters.tinyTMargin, Fonts.titleSmall]}>{item?.request_quantity}</Text>
+                    </View>
+
+                    <View style={[Layout.fill, Layout.center]}>
+                      <Text style={{ color: Colors.grey }}>Approved</Text>
+                      <Text style={[Layout.fill, Gutters.tinyHMargin, Gutters.tinyTMargin, Fonts.titleSmall]}>{item?.approved_quantity}</Text>
+                    </View>
+                  </View>
+                  {/* <Text style={[Fonts.titleTiny, { flex: 1 }]}>{item?.approved_quantity}</Text>
+                  <Text style={[Fonts.titleTiny, Fonts.textCenter, { flex: 1 }]}>{item?.unit}</Text> */}
                 </View>
               )
             }}
