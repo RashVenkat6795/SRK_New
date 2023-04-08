@@ -2,10 +2,15 @@ import axios from 'axios';
 import { Alert } from 'react-native';
 import NetInfo from "@react-native-community/netinfo";
 import { Config } from '@/Config'
+import { useSelector } from 'react-redux';
 
 const Request = async function (options, isHeader = true) {
+	console.log("company options....", options)
+	// let company = useSelector(state => state.user.activeCompany);
+
 	const client = axios.create({
-		baseURL: Config.API_URL,
+		// baseURL: Config.API_URL,
+		// baseURL: `http://eibs.elysiumproduct.com/${options.data.company}/services/`,
 		headers: {
 			'Accept': 'application/json',
 			'Content-Type': 'application/json'
@@ -13,7 +18,7 @@ const Request = async function (options, isHeader = true) {
 	});
 
 	const onSuccess = function (response) {
-		console.debug('Request Successful!', response);
+		console.log('Request Successful!', response);
 		return response.data;
 
 		// const jsonText = JSON.stringify(response.data);

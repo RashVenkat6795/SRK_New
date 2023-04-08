@@ -9,6 +9,9 @@ export default function () {
     logo1: require('@/Assets/Images/SK_LOGO1.png'),
     logo2: require('@/Assets/Images/SK_LOGO2.png'),
 
+    srk: require('@/Assets/Images/srk.png'),
+    sk: require('@/Assets/Images/sk.png'),
+
     login: require('@/Assets/Images/Login.png'),
     homeCard: require('@/Assets/Images/HomeCardBG.png')
   }

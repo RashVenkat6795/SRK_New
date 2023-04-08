@@ -5,6 +5,7 @@ const User = createSlice({
   name: 'user',
   initialState: {
     accessToken: 'accessToken',
+    activeCompany: '',
     isLoggedIn: false,
     loginInfo: null,
     isAuthenticating: false,
@@ -34,6 +35,9 @@ const User = createSlice({
     getProfileDetails() {},
     getMaterials() {},
 
+    setActiveCompany(state, action) {
+      return { ...state, activeCompany: action.payload.data }
+    },
     setToken(state,action) {
       return { ...state, accessToken: action.payload.token }
     },
@@ -82,7 +86,7 @@ const User = createSlice({
 })
 
 export const {
-  getAuth, getHomeStats, getProjects, getEmployees, getStores, getContractors, getStoreProjects, getNotifications, getProfileDetails, getMaterials,
+  setActiveCompany, getAuth, getHomeStats, getProjects, getEmployees, getStores, getContractors, getStoreProjects, getNotifications, getProfileDetails, getMaterials,
 
   setToken, setAuth, setHomeStats, setProjects, setUserCompany, setUserProject, setEmployees, setStores, setContractors, setStoreProjects, setSelectedStoreProjects, setNotifications, setProfileDetails, setMaterials
 } = User.actions
