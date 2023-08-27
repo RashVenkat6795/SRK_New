@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createDrawerNavigator } from '@react-navigation/drawer'
@@ -14,6 +14,7 @@ import {
 } from '@/Containers'
 import { SvgIcons } from '@/Components'
 import { navigate } from './utils'
+import axios from 'axios'
 
 const Tab = createBottomTabNavigator()
 const Stack = createStackNavigator()
@@ -22,12 +23,26 @@ const Drawer = createDrawerNavigator()
 export const AppNavigation = (props) => {
   const { Common, Fonts, Gutters, Layout, Colors, Images, MessageTypes } = useTheme()
   const dispatch = useDispatch()
+  const [refresh, setRefresh] = useState(false)
 
   /* Props state */
   const isLoggedIn = useSelector(state => state.user.isLoggedIn)
   const accessToken = useSelector(state => state.user.accessToken)
+  const activeCompany = useSelector(state => state.user.activeCompany)
 
   useEffect(() => {
+    setRefresh(true)
+    if(activeCompany == 'srk'){
+      axios.defaults.baseURL = `http://eibs.elysiumproduct.com/srk/services/`
+    } else if(activeCompany == 'sk'){
+      axios.defaults.baseURL = `http://eibs.elysiumproduct.com/sk/services/`
+    } else {
+      null
+    }
+    console.log("activeCompany...", activeCompany, axios.defaults)
+    setTimeout(() => {
+      setRefresh(false)
+    },10)
   },[])
 
 
@@ -109,7 +124,7 @@ export const AppNavigation = (props) => {
 
   return(
     <View style={[Layout.fill]}>
-      {isLoggedIn ? <LoggedInStack/> : <AuthStack/>}
+      {refresh ? null : isLoggedIn ? <LoggedInStack/> : <AuthStack/>}
     </View>
   )
 }

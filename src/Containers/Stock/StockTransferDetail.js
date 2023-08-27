@@ -51,8 +51,8 @@ const StockTransferDetail = (props) => {
       data: param
     }).then(response => {
       console.log("stocktransfer details", response)
+      setLoading(false)
       if(response){
-        setLoading(false)
         setData(response)
       }
     }).catch(error => {

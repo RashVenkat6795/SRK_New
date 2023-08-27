@@ -95,6 +95,7 @@ const MaterialRequest = (props) => {
       setValue(0); setTotValue(0);
       setShowModal(false)
     }
+    console.log("list....", list)
   }
 
   const sendMaterialRequest = () => {

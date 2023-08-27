@@ -58,8 +58,8 @@ const StockTransfer = (props) => {
         })
         // response?.stock_transfer_summary?.data = list_data
         setListDt(list_data)
-        setLoading(false)
       }
+      setLoading(false)
     }).catch(error => {
       console.log("stocktransfer error", error)
       setLoading(false)

@@ -99,7 +99,7 @@ const LabourAttendance = () => {
     }
   }
 
-  const renderAttendanceFields = () => {
+  const renderAttendanceFields = () => {console.log("reqCount", reqCount)
     return(
       <ScrollView>
       <View style={Layout.fill}>

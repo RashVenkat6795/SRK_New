@@ -22,11 +22,11 @@ const Login = () => {
   const { width } = Dimensions.get('window')
   const dispatch = useDispatch()
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  // const [username, setUsername] = useState('')
+  // const [password, setPassword] = useState('')
 
-  // const [username, setUsername] = useState('muthuraj')
-  // const [password, setPassword] = useState('Muthuraj@123')
+  const [username, setUsername] = useState('muthuraj')
+  const [password, setPassword] = useState('Muthuraj@123')
   const [visible, setVisible] = useState(false)
   const [activeIndex, setActiveIndex] = useState(null)
 
@@ -56,8 +56,8 @@ const Login = () => {
       <View style={{ height: '30%', width:'100%', backgroundColor: Colors.primary, borderBottomLeftRadius: width/5, borderBottomRightRadius: width/5 }}/>
 
       <View style={[Gutters.smallHMargin, Gutters.regularVMargin, Gutters.largeVPadding, Gutters.regularHPadding, Layout.fill, { backgroundColor: Colors.white, borderRadius: 10, position:'absolute', top: 0, bottom: 0, right: 0, left: 0 }]}>
-        <ScrollView style={Layout.fill}>
-          <Image source={Images.login} style={[Layout.selfCenter, { width: 250, height: 250 }]} resizeMode={'contain'}/>
+        <ScrollView style={Layout.fill} showsVerticalScrollIndicator={false}>
+          <Image source={Images.login} style={[Layout.selfCenter, { width: 150, height: 150 }]} resizeMode={'contain'}/>
 
           <Text style={[Fonts.textSmall, Fonts.textCenter, Gutters.smallBMargin]}>Choose Company</Text>
           <View style={[Layout.rowHCenter, Layout.justifyContentBetween]}>
